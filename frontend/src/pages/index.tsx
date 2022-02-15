@@ -2,10 +2,16 @@ import {useState, useEffect} from 'react'
 import LetterGrid from '../components/LetterGrid'
 import Keyboard from '../components/Keyboard'
 
+import useEventListener from "@use-it/event-listener";
+
 const Index = () => {
   const [ar, setAr] = useState([[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}]]);
   const [rowInd, setRowInd] = useState(0)
   const [wordInd, setWordInd] = useState(0) 
+
+  useEventListener('keydown', (e) => {
+    return handleInput(e.key)
+  })
 
   function handleInput(keyPress) {
     let newAr = [...ar];
@@ -35,23 +41,8 @@ const Index = () => {
     
   }
 
-  useEffect(() => {
-   // console.log(ar);
-  }, [ar]);
-  useEffect(() => {
-    document.body.addEventListener("keydown", (e) => {
-      handleInput(e.key)
-
-    });
-    return () => {
-      document.body.removeEventListener("keydown", (e) => {
-        handleInput(e.key)
-      });
-    };
-  }, []);
-
 return (<>
-  <LetterGrid array={ar}/>
+  <LetterGrid array={ar} />
   <Keyboard handleInput={handleInput}/>
   </>
   )
