@@ -1,13 +1,16 @@
 import {useState, useEffect} from 'react'
 import LetterGrid from '../components/LetterGrid'
 import Keyboard from '../components/Keyboard'
+import { GuessDocument, useGuessMutation } from "../generated/graphql";
 
 import useEventListener from "@use-it/event-listener";
+import { useQuery } from '@apollo/client';
 
 const Index = () => {
-  const [ar, setAr] = useState([[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}]]);
+  const [ar, setAr] = useState([[{letter: '', color: ''},{letter: '', color: ''},{letter: '', color: ''},{letter: '', color: ''},{letter: '', color: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}],[{letter: ''},{letter: ''},{letter: ''},{letter: ''},{letter: ''}]]);
   const [rowInd, setRowInd] = useState(0)
   const [wordInd, setWordInd] = useState(0) 
+  const [guess, {data}] = useGuessMutation()
 
   useEventListener('keydown', (e) => {
     return handleInput(e.key)
@@ -17,29 +20,35 @@ const Index = () => {
     let newAr = [...ar];
     let row = newAr[rowInd]
     let letter = row[wordInd]
+    let guessInput = row.map(l => l.letter).join('')
 
     if(keyPress === "Enter" && wordInd === 4){
+      console.log(guessInput)
+      guess({variables:{guess: guessInput}})
       let newInd = rowInd + 1
       setRowInd(newInd)
       setWordInd(0)
     }
     else if (keyPress === "Backspace") {
+      console.log(letter.letter)
       letter.letter = ''
       setAr([...newAr])
       if(wordInd !== 0){
       setWordInd(wordInd => wordInd - 1)
     }
+    console.log(letter.letter)
     }
-    else{
-      letter.letter = keyPress
+    else if(letter.letter == ''){
+      console.log(letter.letter)
+   
+      letter.letter = keyPress.toUpperCase()
       setAr([...newAr]);
-      console.log(wordInd < 4)
-        if(wordInd < 4){
+        if(wordInd <4){
           setWordInd(wordInd + 1)
         }
+        console.log(letter.letter)
+      }
     }
-    
-  }
 
 return (<>
   <LetterGrid array={ar} />
