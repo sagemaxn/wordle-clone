@@ -16,7 +16,7 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  word: Array<Scalars['String']>;
+  word: Word;
 };
 
 
@@ -34,6 +34,11 @@ export type QueryTestArgs = {
   c: Scalars['String'];
 };
 
+export type Word = {
+  __typename?: 'Word';
+  word: Array<Scalars['String']>;
+};
+
 export type GuessMutationVariables = Exact<{
   guess: Scalars['String'];
 }>;
@@ -41,13 +46,18 @@ export type GuessMutationVariables = Exact<{
 
 export type GuessMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'word'>
+  & { word: (
+    { __typename?: 'Word' }
+    & Pick<Word, 'word'>
+  ) }
 );
 
 
 export const GuessDocument = gql`
     mutation Guess($guess: String!) {
-  word(guess: $guess)
+  word(guess: $guess) {
+    word
+  }
 }
     `;
 export type GuessMutationFn = Apollo.MutationFunction<GuessMutation, GuessMutationVariables>;

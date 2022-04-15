@@ -1,6 +1,13 @@
-import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, Ctx, ObjectType, Field } from "type-graphql";
 
 //The random word. will be handled elsewhere later
+
+@ObjectType()
+export class Word {
+  @Field(() => [String])
+  public word: string[]
+}
+
 const wordyWord = "teeth";
 
 @Resolver()
@@ -10,7 +17,7 @@ export class WordResolver {
     return "asdasda";
   }
 
-  @Mutation(() => [String])
+  @Mutation(() => Word)
   word(@Arg("guess") guess: string) {
       console.log(guess)
     let guessLetters;
@@ -20,12 +27,12 @@ export class WordResolver {
 
     const wordLetters = wordyWord.split("");
 
-    let colors = [];
+    let colors = {word:'d'};
     //need to add logic for when a word has 1 of a letter and person guesses a word with that letter twice, in which they get the placement of 1 of these correct. That should result in green and grey but results in green and yellow.
     
     // ternary operator inside of ternary operator is not easily readable, convert to if else
 
-    colors = guessLetters.map((l, index) =>
+    colors.word = guessLetters.map((l, index) =>
       wordLetters.includes(l, index)
         ? wordLetters[index] === guessLetters[index]
           ? "green"
