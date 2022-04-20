@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import LetterGrid from "../components/LetterGrid";
 import Keyboard from "../components/Keyboard";
-import { GuessDocument, useGuessMutation } from "../generated/graphql";
-import {Button, Container, Heading} from '@chakra-ui/react'
+import { useGuessMutation } from "../generated/graphql";
+import { Button, Container, Heading } from "@chakra-ui/react";
 
 import useEventListener from "@use-it/event-listener";
 
-const stColor = 'lightgrey'
+const stColor = "lightgrey";
 
 const Index = () => {
+  const [won, setWon] = useState(false);
   const [ar, setAr] = useState([
     [
       { letter: "", color: stColor },
@@ -44,65 +45,56 @@ const Index = () => {
       { letter: "", color: stColor },
       { letter: "", color: stColor },
       { letter: "", color: stColor },
-    ]
+    ],
   ]);
   const [rowInd, setRowInd] = useState(0);
   const [wordInd, setWordInd] = useState(0);
-  const [guess, { data, loading }] = useGuessMutation();
+  const [guess, { data, loading }] = useGuessMutation({
+    onCompleted() {
+      console.log(1, data);
+    },
+  });
 
-  useEffect(() => console.log(data),[data])
+  let newAr = [...ar];
+  let row = newAr[rowInd];
+  console.log(row);
+
+  useEffect(() => {
+    if(data){
+    let newRow = row.map((l, i) => {
+      return { ...l, color: data.word.word[i] };
+    });
+    newAr[rowInd] = newRow;
+    setAr([...newAr]);
+    let newInd = rowInd + 1;
+    setRowInd(newInd);
+    setWordInd(0);
+  }}, [data]);
 
   useEventListener("keydown", (e) => {
     return handleInput(e.key);
   });
 
   async function handleInput(keyPress) {
-    const allowedC = /^[a-z]+$/
-    let newAr = [...ar];
-    let row = newAr[rowInd];
-    console.log(row)
-    let letter = row[wordInd];
-    
+    const allowedC = /^[a-z]+$/;
+    let letter = row[wordInd]
 
     if (keyPress === "Enter" && wordInd === 4) {
       let guessInput = row.map((l) => l.letter).join("");
+      guess({ variables: { guess: guessInput } });
 
-      await guess({ variables: { guess: guessInput } });
-      if(loading){
-        return 'loading'
-      }
-      if(data){
-        let newRow = row.map((l, i) => {return {...l, color:data.word.word[i]}})
-        console.log(newRow)
-        newAr[rowInd] = newRow
-        setAr([...newAr])
-        let newInd = rowInd + 1;
-        setRowInd(newInd);
-        setWordInd(0);
-        console.log(ar)
-        
-        
-      }
-          
-    
     } else if (keyPress === "Backspace") {
-      console.log(letter.letter);
       letter.letter = "";
       setAr([...newAr]);
       if (wordInd !== 0) {
         setWordInd((wordInd) => wordInd - 1);
       }
-      console.log(letter.letter);
-
     } else if (letter.letter == "" && allowedC.test(keyPress)) {
-      console.log(letter.letter);
-
       letter.letter = keyPress.toUpperCase();
       setAr([...newAr]);
       if (wordInd < 4) {
         setWordInd(wordInd + 1);
       }
-      console.log(letter.letter);
     }
   }
 
@@ -110,9 +102,10 @@ const Index = () => {
     <Container centerContent={true}>
       <Heading size="xl">Wordle Clone</Heading>
       <LetterGrid array={ar} />
+      <>{JSON.stringify(data) || 'dsada'}</>
       <Keyboard handleInput={handleInput} />
-      <Button onClick={()=> console.log(data)}/>
-      </Container>
+      <Button onClick={() => console.log(data)} />
+    </Container>
   );
 };
 

@@ -1,15 +1,17 @@
 import React from "react";
 import { Box, Flex } from "@chakra-ui/react";
+import { ArrowBackIcon } from '@chakra-ui/icons'
 
 const Keyboard = ({ handleInput }) => {
   const row1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
   const row2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
-  const row3 = ["Enter", "Z", "X", "C", "V", "B", "N", "M", "Backspace"];
+  const row3 = ["Enter", "Z", "X", "C", "V", "B", "N", "M", <ArrowBackIcon/>];
 
   const rows = [row1, row2, row3];
 
   const Key = ({ letter, children }) => (
-    <Box
+    <Flex
+    alignItems="center" justifyContent="center"
       background="lightgrey"
       margin="5px"
       w="40px"
@@ -17,7 +19,7 @@ const Keyboard = ({ handleInput }) => {
       onClick={() => handleInput(letter)}
     >
       {children}
-    </Box>
+    </Flex>
   );
 
   const genKeyboard = () =>
