@@ -1,3 +1,4 @@
+import { arrayContains } from "class-validator";
 import {
   Resolver,
   Query,
@@ -37,8 +38,13 @@ export class WordResolver {
 
     let colors = { word: "d" };
 
+    const count = (ar, letter) => ar.reduce((a, b) => a + letter, 0) 
+
+    //currently yellows do not account for how many times the letter exists in the answer, only that it exists at least once
+
     colors.word = guessLetters.map((l, index) => {
       if(wordLetters[index] === guessLetters[index]){
+        console.log(count(wordLetters, l))
         return "green"
       }
       if (wordLetters.includes(l)) {

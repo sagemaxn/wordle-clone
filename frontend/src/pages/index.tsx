@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
+import { Container, Heading, useDisclosure } from "@chakra-ui/react";
+import useEventListener from "@use-it/event-listener";
+
 import LetterGrid from "../components/LetterGrid";
 import Keyboard from "../components/Keyboard";
+import Alert from "../components/Alert"
 import { useGuessMutation } from "../generated/graphql";
-import { Button, Container, Heading } from "@chakra-ui/react";
-
-import useEventListener from "@use-it/event-listener";
 
 const stColor = "lightgrey";
 
 const Index = () => {
-  const [won, setWon] = useState(false);
+  const [gameOn, setGameOn] = useState(true);
   const [ar, setAr] = useState([
     [
       { letter: "", color: stColor },
@@ -49,15 +50,11 @@ const Index = () => {
   ]);
   const [rowInd, setRowInd] = useState(0);
   const [wordInd, setWordInd] = useState(0);
-  const [guess, { data, loading }] = useGuessMutation({
-    onCompleted() {
-      console.log(1, data);
-    },
-  });
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [guess, { data }] = useGuessMutation();
 
   let newAr = [...ar];
   let row = newAr[rowInd];
-  console.log(row);
 
   useEffect(() => {
     if(data){
@@ -65,7 +62,11 @@ const Index = () => {
       return { ...l, color: data.word.word[i] };
     });
     newAr[rowInd] = newRow;
-    setAr([...newAr]);
+    setAr([...newAr])
+    if(newRow.map(l => l.color).join("") === "greengreengreengreengreen"){
+      setGameOn(false)
+      onOpen()
+    }
     let newInd = rowInd + 1;
     setRowInd(newInd);
     setWordInd(0);
@@ -76,6 +77,7 @@ const Index = () => {
   });
 
   async function handleInput(keyPress) {
+    if((gameOn)){
     const allowedC = /^[a-z]+$/;
     let letter = row[wordInd]
 
@@ -97,14 +99,13 @@ const Index = () => {
       }
     }
   }
-
+}
   return (
     <Container centerContent={true}>
+      <Alert isOpen={isOpen} onClose={onClose}/>
       <Heading size="xl">Wordle Clone</Heading>
       <LetterGrid array={ar} />
-      <>{JSON.stringify(data) || 'dsada'}</>
-      <Keyboard handleInput={handleInput} />
-      <Button onClick={() => console.log(data)} />
+      <Keyboard handleInput={handleInput} array={ar} color={stColor}/>
     </Container>
   );
 };
