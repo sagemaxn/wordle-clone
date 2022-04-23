@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef } from "react";
 
-export default function Alert({ isOpen, onClose }) {
+export default function Alert({ isOpen, onClose, won }) {
   const cancelRef = useRef();
 
   return (
@@ -21,7 +21,7 @@ export default function Alert({ isOpen, onClose }) {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              You won!
+              {won ? "You won!" : "You lose!"}
             </AlertDialogHeader>
 
             <AlertDialogFooter>

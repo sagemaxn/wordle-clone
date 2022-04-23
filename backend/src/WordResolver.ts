@@ -12,9 +12,18 @@ import {
 //The random word. will be handled elsewhere later
 
 @ObjectType()
+export class Letter {
+  @Field(() => String)
+  letter: string;
+
+  @Field(() => String)
+  color: string;
+}
+
+@ObjectType()
 export class Word {
-  @Field(() => [String])
-  public word: string[];
+  @Field(() => [Letter])
+  public word: Letter[];
 }
 
 const wordyWord = "teeth";
@@ -34,24 +43,17 @@ export class WordResolver {
       guessLetters = guess.toLowerCase().split("");
     }
 
-    const wordLetters = wordyWord.split("");
+    const answerLetters = wordyWord.split("");
 
-    let colors = { word: "d" };
+    let colors = {
+      word: [
+        { letter: "no word", color: "s" },
+        { letter: "no word", color: "s" },
+      ],
+    };
 
-    const count = (ar, letter) => ar.reduce((a, b) => a + letter, 0) 
+    colors.word = guessLetters.map((l, index) => {});
 
-    //currently yellows do not account for how many times the letter exists in the answer, only that it exists at least once
-
-    colors.word = guessLetters.map((l, index) => {
-      if(wordLetters[index] === guessLetters[index]){
-        console.log(count(wordLetters, l))
-        return "green"
-      }
-      if (wordLetters.includes(l)) {
-        return "yellow"
-      }
-      return "grey";
-    });    
     return colors;
   }
 }
