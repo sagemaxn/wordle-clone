@@ -1,7 +1,10 @@
 mutation Guess($guess: String!) {
     
   word(guess: $guess){
-    word
+    word{
+      color
+      letter
+    }
   }
 
 }

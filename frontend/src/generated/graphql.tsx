@@ -14,6 +14,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type Letter = {
+  __typename?: 'Letter';
+  color: Scalars['String'];
+  letter: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   word: Word;
@@ -36,7 +42,7 @@ export type QueryTestArgs = {
 
 export type Word = {
   __typename?: 'Word';
-  word: Array<Scalars['String']>;
+  word: Array<Letter>;
 };
 
 export type GuessMutationVariables = Exact<{
@@ -48,7 +54,10 @@ export type GuessMutation = (
   { __typename?: 'Mutation' }
   & { word: (
     { __typename?: 'Word' }
-    & Pick<Word, 'word'>
+    & { word: Array<(
+      { __typename?: 'Letter' }
+      & Pick<Letter, 'color' | 'letter'>
+    )> }
   ) }
 );
 
@@ -56,7 +65,10 @@ export type GuessMutation = (
 export const GuessDocument = gql`
     mutation Guess($guess: String!) {
   word(guess: $guess) {
-    word
+    word {
+      color
+      letter
+    }
   }
 }
     `;

@@ -8,7 +8,8 @@ import {
 } from "@chakra-ui/react";
 import { useRef } from "react";
 
-export default function Alert({ isOpen, onClose, won }) {
+export default function Alert({ isOpen, onClose }) {
+  let won = true
   const cancelRef = useRef();
 
   return (
