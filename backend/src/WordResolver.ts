@@ -26,13 +26,17 @@ export class Word {
   public word: Letter[];
 }
 
-const wordyWord = "teeth";
+const correctAnswer = "noise";
 
 @Resolver()
 export class WordResolver {
   @Query(() => String)
   test(@Ctx() { req, res }, @Arg("c") c: string): String {
     return "asdasda";
+  }
+  @Query(() => String)
+  answer(){
+    return correctAnswer
   }
 
   @Mutation(() => Word)
@@ -43,14 +47,14 @@ export class WordResolver {
       guessLetters = guess.toLowerCase().split("");
     }
 
-    const answerLetters = wordyWord.split("");
+    const answerLetters = correctAnswer.split("");
     let dupe = [...answerLetters]
 
     let colors = {
       word: [
         { letter: "no word", color: "s" },
         { letter: "no word", color: "s" },
-      ],
+      ]
     };
 
     colors.word = guessLetters.map((l, index) => {
@@ -70,8 +74,7 @@ export class WordResolver {
       }
       return l
     })
-    console.log(dupe)
-    console.log(answerLetters)
+    console.log(colors)
     return colors;
   }
 }

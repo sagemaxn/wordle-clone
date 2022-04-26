@@ -10,7 +10,8 @@ import { useGuessMutation } from "../generated/graphql";
 const stColor = "lightgrey";
 
 const Index = () => {
-  const [gameOn, setGameOn] = useState(true);
+  const [won, setWon] = useState(false);
+  const [lost, setLost] = useState(false)
   const [ar, setAr] = useState([
     [
       { letter: "", color: stColor },
@@ -47,6 +48,13 @@ const Index = () => {
       { letter: "", color: stColor },
       { letter: "", color: stColor },
     ],
+    [
+      { letter: "", color: stColor },
+      { letter: "", color: stColor },
+      { letter: "", color: stColor },
+      { letter: "", color: stColor },
+      { letter: "", color: stColor },
+    ]
   ]);
   const [keyColors, setKeyColors] = useState({
     Q: stColor,
@@ -85,14 +93,13 @@ const Index = () => {
   let newAr = [...ar];
   let curRow = newAr[rowInd];
 
-  let joinedArray = [...ar[0], ...ar[1], ...ar[2], ...ar[3], ...ar[4]];
+  let joinedArray = [...ar[0], ...ar[1], ...ar[2], ...ar[3], ...ar[4], ...ar[5]];
 
   useEffect(() => {
     let copy = keyColors;
     if (data) {
       //console.log(data.word.word)
       let newRow = curRow.map((l, i) => {
-        // if already green, do not change
         console.log(l.color);
         console.log(copy[l.letter]);
         if (copy[l.letter] !== "green") {
@@ -105,11 +112,15 @@ const Index = () => {
       newAr[rowInd] = newRow;
       setAr([...newAr]);
       if (newRow.every((l) => l.color === "green")) {
-        setGameOn(false);
+        setWon(true);
         onOpen();
       }
       let newInd = rowInd + 1;
       setRowInd(newInd);
+      if(rowInd > 5){
+        setLost(true)
+        onOpen()
+      }
       setWordInd(0);
     }
   }, [data]);
@@ -119,9 +130,11 @@ const Index = () => {
   });
 
   async function handleInput(keyPress) {
-    if (gameOn) {
+    if (!lost || !won) {
       const allowedC = /^[a-z]+$/;
       let letter = curRow[wordInd];
+      console.log(wordInd, curRow, letter)
+
 
       if (keyPress === "Enter" && wordInd === 4) {
         let guessInput = curRow.map((l) => l.letter).join("");
@@ -147,7 +160,7 @@ const Index = () => {
   }
   return (
     <Container centerContent={true}>
-      <Alert isOpen={isOpen} onClose={onClose} />
+      <Alert isOpen={isOpen} onClose={onClose} won={won} lost={lost}/>
       <Heading size="xl">Wordle Clone</Heading>
       <LetterGrid array={ar} />
       <Keyboard

@@ -32,6 +32,7 @@ export type MutationWordArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  answer: Scalars['String'];
   test: Scalars['String'];
 };
 
@@ -59,6 +60,14 @@ export type GuessMutation = (
       & Pick<Letter, 'color' | 'letter'>
     )> }
   ) }
+);
+
+export type AnswerQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AnswerQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'answer'>
 );
 
 
@@ -98,3 +107,35 @@ export function useGuessMutation(baseOptions?: Apollo.MutationHookOptions<GuessM
 export type GuessMutationHookResult = ReturnType<typeof useGuessMutation>;
 export type GuessMutationResult = Apollo.MutationResult<GuessMutation>;
 export type GuessMutationOptions = Apollo.BaseMutationOptions<GuessMutation, GuessMutationVariables>;
+export const AnswerDocument = gql`
+    query Answer {
+  answer
+}
+    `;
+
+/**
+ * __useAnswerQuery__
+ *
+ * To run a query within a React component, call `useAnswerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAnswerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAnswerQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAnswerQuery(baseOptions?: Apollo.QueryHookOptions<AnswerQuery, AnswerQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AnswerQuery, AnswerQueryVariables>(AnswerDocument, options);
+      }
+export function useAnswerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AnswerQuery, AnswerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AnswerQuery, AnswerQueryVariables>(AnswerDocument, options);
+        }
+export type AnswerQueryHookResult = ReturnType<typeof useAnswerQuery>;
+export type AnswerLazyQueryHookResult = ReturnType<typeof useAnswerLazyQuery>;
+export type AnswerQueryResult = Apollo.QueryResult<AnswerQuery, AnswerQueryVariables>;

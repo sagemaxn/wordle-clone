@@ -9,4 +9,8 @@ mutation Guess($guess: String!) {
 
 }
 
+query Answer{
+  answer
+}
+
 
