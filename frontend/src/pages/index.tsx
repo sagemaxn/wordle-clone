@@ -114,11 +114,8 @@ const Index = ({ answer }) => {
     let copy = keyColors;
     if (data) {
       let newRow = curRow.map((l, i) => {
-        console.log(l.color);
-        console.log(copy[l.letter]);
         if (copy[l.letter] !== "green") {
           copy[l.letter] = data.word.word[i].color;
-          console.log("not green");
         }
         return { letter: l.letter, color: data.word.word[i].color };
       });
@@ -152,9 +149,9 @@ const Index = ({ answer }) => {
     if (!lost || !won) {
       const allowedC = /^[a-z]+$/;
       let letter = curRow[wordInd];
-      console.log(wordInd, curRow, letter);
 
-      if (keyPress === "Enter" && wordInd === 4) {
+      if (keyPress === "ENTER" || keyPress === "Enter") {
+        if(wordInd === 5){
         // const a = await *query* 
         //if(a.data...)
         isWord({ variables: { guess: guessInput } }).then(
@@ -167,20 +164,24 @@ const Index = ({ answer }) => {
             console.error(error);
           }
         );
-      } else if (keyPress === "Backspace") {
+
+        // $$typeof is a property found on the React element object used as the backspace symbol
+      }} else if (keyPress.$$typeof || keyPress === "Backspace") {
+        console.log(wordInd)
         if (wordInd !== 0) {
           letter = curRow[wordInd - 1];
         }
         letter.letter = "";
         letter.color = stColor;
+        console.log(letter)
         setAr([...newAr]);
         if (wordInd !== 0) {
           setWordInd((wordInd) => wordInd - 1);
         }
-      } else if (letter.letter == "" && allowedC.test(keyPress.toLowerCase())) {
+      } else if ( wordInd !==5 && letter.letter == "" && allowedC.test(keyPress.toLowerCase())) {
         letter.letter = keyPress.toUpperCase();
         setAr([...newAr]);
-        if (wordInd < 4) {
+        if (wordInd < 5) {
           setWordInd(wordInd + 1);
         }
       }

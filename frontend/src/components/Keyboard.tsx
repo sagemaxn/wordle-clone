@@ -11,11 +11,6 @@ const Keyboard = ({ handleInput, joinedArray, colors }) => {
     ["ENTER", "Z", "X", "C", "V", "B", "N", "M", <ArrowBackIcon />],
   ]);
 
-  useEffect(() => {
-    console.log("changed");
-    setRows([...rows]);
-  }, [joinedArray]);
-
   const genKeyboard = () =>
     rows.map((row, flexInd) => (
       <Flex key={flexInd}>

@@ -9,7 +9,9 @@ const Key = ({ letter, children, array, handleInput, color }) => {
       margin="5px"
       w={color[letter] ? "40px" : "65px"}
       h="45px"
-      // onClick={() => handleInput(letter)}
+      onClick={() => {
+        handleInput(letter);
+      }}
     >
       {children}
     </Flex>
