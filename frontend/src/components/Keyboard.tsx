@@ -17,15 +17,16 @@ const Keyboard = ({ handleInput, joinedArray, colors }) => {
   }, [joinedArray]);
 
   const genKeyboard = () =>
-    rows.map((row) => (
-      <Flex>
-        {row.map((key) => {
+    rows.map((row, flexInd) => (
+      <Flex key={flexInd}>
+        {row.map((key, i) => {
           return (
             <Key
               letter={key}
               array={joinedArray}
               handleInput={handleInput}
               color={colors}
+              key={i}
             >
               {key}
             </Key>

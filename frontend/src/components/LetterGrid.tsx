@@ -5,7 +5,7 @@ import Square from './Square'
 const LetterGrid = ({array}) => {
 
   function gen() {
-    return array.map((row) => <Flex>{row.map(v => <Square letter={v.letter} color={v.color}/>)}</Flex>)
+    return array.map((row, flexInd) => <Flex key={flexInd}>{row.map((v, i) => <Square letter={v.letter} color={v.color} key={i}/>)}</Flex>)
     }
 
   return (

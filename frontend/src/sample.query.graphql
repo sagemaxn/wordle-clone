@@ -13,4 +13,6 @@ query Answer{
   answer
 }
 
-
+query InDictionary($guess: String!){
+  inDictionary(guess: $guess)
+}

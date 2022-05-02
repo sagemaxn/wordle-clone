@@ -22,7 +22,7 @@ export default function Alert({ isOpen, onClose, won, lost, correctAnswer }) {
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               {won && "You won!"}
-              {lost && `The word was ${word}`}
+              {lost && `You lost. The word was ${correctAnswer}`}
             </AlertDialogHeader>
 
             <AlertDialogFooter>

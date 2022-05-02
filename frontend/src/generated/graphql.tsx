@@ -33,12 +33,12 @@ export type MutationWordArgs = {
 export type Query = {
   __typename?: 'Query';
   answer: Scalars['String'];
-  test: Scalars['String'];
+  inDictionary: Scalars['Boolean'];
 };
 
 
-export type QueryTestArgs = {
-  c: Scalars['String'];
+export type QueryInDictionaryArgs = {
+  guess: Scalars['String'];
 };
 
 export type Word = {
@@ -68,6 +68,16 @@ export type AnswerQueryVariables = Exact<{ [key: string]: never; }>;
 export type AnswerQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'answer'>
+);
+
+export type InDictionaryQueryVariables = Exact<{
+  guess: Scalars['String'];
+}>;
+
+
+export type InDictionaryQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'inDictionary'>
 );
 
 
@@ -139,3 +149,36 @@ export function useAnswerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ans
 export type AnswerQueryHookResult = ReturnType<typeof useAnswerQuery>;
 export type AnswerLazyQueryHookResult = ReturnType<typeof useAnswerLazyQuery>;
 export type AnswerQueryResult = Apollo.QueryResult<AnswerQuery, AnswerQueryVariables>;
+export const InDictionaryDocument = gql`
+    query InDictionary($guess: String!) {
+  inDictionary(guess: $guess)
+}
+    `;
+
+/**
+ * __useInDictionaryQuery__
+ *
+ * To run a query within a React component, call `useInDictionaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInDictionaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInDictionaryQuery({
+ *   variables: {
+ *      guess: // value for 'guess'
+ *   },
+ * });
+ */
+export function useInDictionaryQuery(baseOptions: Apollo.QueryHookOptions<InDictionaryQuery, InDictionaryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<InDictionaryQuery, InDictionaryQueryVariables>(InDictionaryDocument, options);
+      }
+export function useInDictionaryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InDictionaryQuery, InDictionaryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<InDictionaryQuery, InDictionaryQueryVariables>(InDictionaryDocument, options);
+        }
+export type InDictionaryQueryHookResult = ReturnType<typeof useInDictionaryQuery>;
+export type InDictionaryLazyQueryHookResult = ReturnType<typeof useInDictionaryLazyQuery>;
+export type InDictionaryQueryResult = Apollo.QueryResult<InDictionaryQuery, InDictionaryQueryVariables>;
