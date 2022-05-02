@@ -1,14 +1,3 @@
-mutation Guess($guess: String!) {
-    
-  word(guess: $guess){
-    word{
-      color
-      letter
-    }
-  }
-
-}
-
 query Answer{
   answer
 }

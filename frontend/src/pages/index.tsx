@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { Container, Heading, useDisclosure } from "@chakra-ui/react";
 import useEventListener from "@use-it/event-listener";
-import { gql } from "@apollo/client";
 
 import client from "../lib/client";
 import LetterGrid from "../components/LetterGrid";
 import Keyboard from "../components/Keyboard";
 import Alert from "../components/Alert";
 import {
-  useGuessMutation,
   useInDictionaryLazyQuery,
   AnswerDocument,
 } from "../generated/graphql";
@@ -94,8 +92,6 @@ const Index = ({ answer }) => {
   const [rowInd, setRowInd] = useState(0);
   const [wordInd, setWordInd] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [guess, { data }] = useGuessMutation();
-
   const [isWord, { data: isWordData }] = useInDictionaryLazyQuery();
 
   let newAr = [...ar];
@@ -110,42 +106,62 @@ const Index = ({ answer }) => {
     ...ar[5],
   ];
 
-  useEffect(() => {
-    let copy = keyColors;
-    if (data) {
-      let newRow = curRow.map((l, i) => {
-        if (copy[l.letter] !== "green") {
-          copy[l.letter] = data.word.word[i].color;
-        }
-        return { letter: l.letter, color: data.word.word[i].color };
-      });
-      setKeyColors(copy);
-      newAr[rowInd] = newRow;
-      setAr([...newAr]);
-      if (newRow.every((l) => l.color === "green")) {
-        setWon(true);
-        onOpen();
-      }
-      let newInd = rowInd + 1;
-      setRowInd(newInd);
-      if (rowInd === 5) {
-        console.log("lost");
-        setLost(true);
-        onOpen();
-      }
-      setWordInd(0);
-    }
-  }, [data]);
-
   useEventListener("keydown", (e) => {
     return handleInput(e.key);
   });
 
+function guessWord(guessLetters){
+  // set color of letters in guess
+   const answerLetters = answer.answer.split("");
+   let dupe = [...answerLetters];
+
+   let colors = guessLetters.map((l, index) => {
+     if (answerLetters[index] === guessLetters[index]) {
+       console.log(index, answerLetters[index], guessLetters[index]);
+       console.log(dupe);
+       dupe.splice(dupe.indexOf(l), 1);
+       return { letter: l, color: "green" };
+     } else return { letter: l, color: "darkgrey" };
+   });
+
+   colors.map((l) => {
+     if (dupe.includes(l.letter) && l.color !== "green") {
+       l.color = "yellow";
+       dupe.splice(dupe.indexOf(l.letter), 1);
+     }
+     return l;
+   });
+// set color of keys on keyboard
+   let copy = keyColors;
+
+     let newRow = curRow.map((l, i) => {
+       if (copy[l.letter] !== "green") {
+         copy[l.letter] = colors[i].color;
+       }
+       return { letter: l.letter, color: colors[i].color };
+     });
+     setKeyColors(copy);
+     newAr[rowInd] = newRow;
+     setAr([...newAr]);
+     if (newRow.every((l) => l.color === "green")) {
+       setWon(true);
+       onOpen();
+     }
+     let newInd = rowInd + 1;
+     setRowInd(newInd);
+     if (rowInd === 5) {
+       console.log("lost");
+       setLost(true);
+       onOpen();
+     }
+     setWordInd(0);
+
+}
+  
+
   async function handleInput(keyPress) {
     let guessInput = curRow
-      .map((l) => l.letter)
-      .join("")
-      .toLowerCase();
+      .map((l) => l.letter.toLowerCase())
     if (!lost || !won) {
       const allowedC = /^[a-z]+$/;
       let letter = curRow[wordInd];
@@ -154,11 +170,12 @@ const Index = ({ answer }) => {
         if(wordInd === 5){
         // const a = await *query* 
         //if(a.data...)
-        isWord({ variables: { guess: guessInput } }).then(
+
+        isWord({ variables: { guess: guessInput.join('') } }).then(
           (data) => {
             if (!data.data.inDictionary) {
               console.log("not a word in our list!");
-            } else guess({ variables: { guess: guessInput } });
+            } else guessWord(guessInput)
           },
           (error) => {
             console.error(error);
