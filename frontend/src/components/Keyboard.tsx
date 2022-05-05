@@ -29,7 +29,7 @@ const Keyboard = ({ handleInput, joinedArray, colors }) => {
         })}
       </Flex>
     ));
-  return <>{genKeyboard()}</>;
+  return <Box w={["100%"]}>{genKeyboard()}</Box>;
 };
 
 export default Keyboard;

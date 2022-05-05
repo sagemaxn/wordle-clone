@@ -8,6 +8,7 @@ import {
   ObjectType,
   Field,
 } from "type-graphql";
+import schedule from 'node-schedule'
 import { readFileSync } from "fs";
 const path = require("path");
 
@@ -25,6 +26,11 @@ export class Word {
   @Field(() => [Letter])
   public word: Letter[];
 }
+
+// pick new word every midnight
+schedule.scheduleJob('0 0 * * *', () => {
+// 
+})
 
 const correctAnswer = "noise";
 
