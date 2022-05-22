@@ -160,9 +160,10 @@ function guessWord(guessLetters){
   
 
   async function handleInput(keyPress) {
-    let guessInput = curRow
-      .map((l) => l.letter.toLowerCase())
+  
     if (!lost || !won) {
+      let guessInput = curRow
+      .map((l) => l.letter.toLowerCase())
       const allowedC = /^[a-z]+$/;
       let letter = curRow[wordInd];
 
@@ -229,6 +230,7 @@ export default Index;
 export async function getServerSideProps() {
   const { data } = await client.query({
     query: AnswerDocument,
+    fetchPolicy:"no-cache"
   });
 
   return {

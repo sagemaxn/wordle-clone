@@ -13,7 +13,7 @@ const Keyboard = ({ handleInput, joinedArray, colors }) => {
 
   const genKeyboard = () =>
     rows.map((row, flexInd) => (
-      <Flex key={flexInd}>
+      <Flex key={flexInd} justifyContent="center">
         {row.map((key, i) => {
           return (
             <Key

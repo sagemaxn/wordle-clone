@@ -8,9 +8,14 @@ import {
   ObjectType,
   Field,
 } from "type-graphql";
-import schedule from 'node-schedule'
 import { readFileSync } from "fs";
 const path = require("path");
+
+
+import newAnswer from '../dictionary/pickWord'
+newAnswer
+import correctAnswer from '../dictionary/currentWord'
+console.log(correctAnswer)
 
 @ObjectType()
 export class Letter {
@@ -26,13 +31,6 @@ export class Word {
   @Field(() => [Letter])
   public word: Letter[];
 }
-
-// pick new word every midnight
-schedule.scheduleJob('0 0 * * *', () => {
-// 
-})
-
-const correctAnswer = "noise";
 
 @Resolver()
 export class WordResolver {
