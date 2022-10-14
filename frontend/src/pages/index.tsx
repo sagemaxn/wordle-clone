@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Container, Heading, useDisclosure } from "@chakra-ui/react";
-import useEventListener from "@use-it/event-listener";
-import React from 'react'
+
 import client from "../lib/client";
 import LetterGrid from "../components/LetterGrid";
 import Keyboard from "../components/Keyboard";
@@ -106,11 +105,7 @@ const Index = ({ answer }) => {
     ...ar[5],
   ];
 
-  function hm(e){
-    const target = e.target as React.KeyboardEvent;
-    handleInput(target.key)
-  }
-  useEventListener("keydown", hm);
+
 
 function guessWord(guessLetters){
   // set color of letters in guess

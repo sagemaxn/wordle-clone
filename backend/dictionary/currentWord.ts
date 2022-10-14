@@ -1,2 +1,2 @@
-const correctAnswer = 'supra' 
+const correctAnswer = 'boate' 
 export default correctAnswer

@@ -20,8 +20,10 @@ const main = async () => {
   const apolloServer = new ApolloServer({
     schema,
     context: async ({ req, res }) => {
-      return { res, req, payload: "asd" };
+      return { res, req };
     },
+    introspection: true,
+    playground: true
   });
 
   apolloServer.applyMiddleware({
@@ -29,11 +31,12 @@ const main = async () => {
     cors: {
       credentials: true,
       methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-      origin: "http://localhost:3000",
+      origin: "https://sage-wordle.herokuapp.com/"
     },
+    path: "/graphql"
   });
 
-  app.listen(4000, () => {
+  app.listen({port: process.env.PORT || 4000}, () => {
     console.log("Server started on 4000");
   });
 };
