@@ -5,6 +5,7 @@ import client from "../lib/client";
 import LetterGrid from "../components/LetterGrid";
 import Keyboard from "../components/Keyboard";
 import Alert from "../components/Alert";
+import NotAWord from "../components/NotAWord"
 import {
   useInDictionaryLazyQuery,
   AnswerDocument,
@@ -105,8 +106,6 @@ const Index = ({ answer }) => {
     ...ar[5],
   ];
 
-
-
 function guessWord(guessLetters){
   // set color of letters in guess
    const answerLetters = answer.answer.split("");
@@ -154,7 +153,16 @@ function guessWord(guessLetters){
      setWordInd(0);
 
 }
-  
+ 
+const [notAWordArray, setNotAWordArray] = useState([])
+useEffect(() => {
+const timer = setTimeout(() => {
+  const newArr = notAWordArray.slice(1)
+  setNotAWordArray(newArr)
+}, 2500)
+  return () => clearTimeout(timer);
+}, [notAWordArray])
+
 
   async function handleInput(keyPress) {
   
@@ -173,6 +181,7 @@ function guessWord(guessLetters){
           (data) => {
             if (!data.data.inDictionary) {
               console.log("not a word in our list!");
+              setNotAWordArray(prevArray => [...prevArray, "Not a word in our list"])
             } else guessWord(guessInput)
           },
           (error) => {
@@ -211,6 +220,7 @@ function guessWord(guessLetters){
         lost={lost}
         correctAnswer={answer.answer}
       />
+      <NotAWord array={notAWordArray}/>
       <Heading size="xl">Wordle Clone</Heading>
       <LetterGrid array={ar} />
       <Keyboard
