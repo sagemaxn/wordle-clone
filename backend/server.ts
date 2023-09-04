@@ -7,7 +7,6 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import { json } from 'body-parser';
 import * as http from 'http'
 
-
 import { ApolloServer } from "@apollo/server";
 import { buildSchema } from "type-graphql";
 import { WordResolver } from "./src/WordResolver";
@@ -31,7 +30,7 @@ const app = Express()
   await server.start();
   app.use(
     '/graphql',
-    cors<cors.CorsRequest>({ origin: process.env.NODE_ENV === 'production' ? ['https://sage-wordle.herokuapp.com', 'https://studio.apollographql.com'] : 'http://localhost:3000', credentials: true }),
+    cors<cors.CorsRequest>({ origin: ['https://wordle.sagemaxn.dev', 'https://studio.apollographql.com'], credentials: true }),
     json(),
     expressMiddleware(server, {
       context: async ({ req, res }) => ({ req, res }),
@@ -39,7 +38,7 @@ const app = Express()
   );
 
   await new Promise<void>((resolve) => httpServer.listen({ port: process.env.PORT || 4000 }, resolve));
-  console.log(`🚀 Server ready at http://localhost:4000/graphql`);
+  console.log(`🚀 Server ready at https://wordle.sagemaxn.dev`);
 }
 main();
 

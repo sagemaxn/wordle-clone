@@ -1,2 +1,2 @@
-const correctAnswer = 'wines' 
+const correctAnswer = 'honey' 
 export default correctAnswer

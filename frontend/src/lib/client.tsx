@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache, HttpLink, createHttpLink } from "@apollo/client";
 
-const uri = process.env.NODE_ENV === 'production' ? 'https://sage-wordle-backend.herokuapp.com/graphql' : 'http://localhost:4000/graphql'
+const uri = 'https://wordle-backend.sagemaxn.com/graphql'
 
 const client = new ApolloClient({
   ssrMode: typeof window === 'undefined',

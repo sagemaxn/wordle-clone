@@ -11,7 +11,6 @@ import {
 import { readFileSync } from "fs";
 const path = require("path");
 
-
 import newAnswer from '../dictionary/pickWord'
 newAnswer
 import correctAnswer from '../dictionary/currentWord'

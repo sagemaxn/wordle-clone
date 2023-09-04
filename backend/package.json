@@ -2,14 +2,14 @@
   "name": "backend",
   "version": "1.0.0",
   "engines": {
-    "node": "18.x"
+    "node": "17.x"
   },
   "description": "",
   "main": "server.ts",
   "scripts": {
     "dev": "nodemon --exec ts-node server.ts",
     "start": "ts-node server.ts",
-    "deploy": "git add . && git commit -m 'Heroku' && git push heroku"
+    "deploy": "cross-env NODE_ENV=production && git add . && git commit -m 'dokku' && git push -f dokku && cross-env NODE_ENV=development"
   },
   "author": "Sage Maxwell",
   "license": "ISC",
