@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
-import { Flex } from "@chakra-ui/react";
+import { useEffect, useState } from 'react';
+import { Flex } from '@chakra-ui/react';
 const Key = ({ letter, children, array, handleInput, color }) => {
-  return (
-    <Flex
-      alignItems="center"
-      justifyContent="center"
-      background={color[letter] ? color[letter] : color["EnterAndBack"]}
-      margin="5px"
-      w={color[letter] ? "40px" : "65px"}
-      h="45px"
-      onClick={() => {
-        handleInput(letter);
-      }}
-    >
-      {children}
-    </Flex>
-  );
+    return (
+        <Flex
+            alignItems="center"
+            background={color[letter] ? color[letter] : color.EnterAndBack}
+            h="45px"
+            justifyContent="center"
+            margin="5px"
+            onClick={() => {
+                handleInput(letter);
+            }}
+            w={color[letter] ? '40px' : '65px'}
+        >
+            {children}
+        </Flex>
+    );
 };
 
 export default Key;
