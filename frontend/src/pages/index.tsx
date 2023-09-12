@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-    Container,
+    Flex,
     Heading,
     Icon,
     Link,
+    Spinner,
     Text,
     Tooltip,
     useDisclosure,
@@ -18,6 +19,8 @@ import { AnswerDocument, useInDictionaryLazyQuery } from '../generated/graphql';
 
 const stColor = 'lightgrey';
 import {
+    clearState,
+    getCurrentDateInEST,
     keyPressAction,
     loadState,
     saveState,
@@ -104,19 +107,10 @@ const Index = ({ answer }) => {
     const [wordInd, setWordInd] = useState(0);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [isWord] = useInDictionaryLazyQuery();
+    const [isLoading, setIsLoading] = useState(true);
 
     const newAr = [...ar];
     const curRow = newAr[rowInd];
-
-    const joinedArray = [
-        ...ar[0],
-        ...ar[1],
-        ...ar[2],
-        ...ar[3],
-        ...ar[4],
-        ...ar[5],
-    ];
-
     const [isNotAWordVisible, setIsNotAWordVisible] = useState(false);
 
     useEffect(() => {
@@ -150,27 +144,53 @@ const Index = ({ answer }) => {
         };
     }, []);
     useEffect(() => {
-        const savedAr = loadState('ar');
-        const savedKeyColors = loadState('keyColors');
-        const savedRowInd = loadState('rowInd');
+        const savedDate = loadState('date');
+        const currentDate = getCurrentDateInEST();
 
-        if (savedAr) {
-            setAr(savedAr);
+        if (savedDate !== currentDate) {
+            // If saved date doesn't match the current date, clear all saved states
+            clearState('ar');
+            clearState('keyColors');
+            clearState('rowInd');
+            clearState('won');
+            clearState('lost');
+
+            // Save the current date to local storage
+            saveState('date', currentDate);
+        } else {
+            const savedAr = loadState('ar');
+            const savedKeyColors = loadState('keyColors');
+            const savedRowInd = loadState('rowInd');
+            const savedWon = loadState('won');
+            const savedLost = loadState('lost');
+
+            if (savedAr) {
+                setAr(savedAr);
+            }
+            if (savedKeyColors) {
+                setKeyColors(savedKeyColors);
+            }
+            if (typeof savedRowInd === 'number') {
+                setRowInd(savedRowInd);
+            }
+            if (savedWon !== null) {
+                setWon(savedWon);
+            }
+            if (savedLost !== null) {
+                setLost(savedLost);
+            }
         }
-        if (savedKeyColors) {
-            setKeyColors(savedKeyColors);
-        }
-        if (typeof savedRowInd === 'number') {
-            setRowInd(savedRowInd);
-        }
+
+        setIsLoading(false);
     }, []);
 
     useEffect(() => {
         saveState('ar', ar);
         saveState('keyColors', keyColors);
         saveState('rowInd', rowInd);
-        saveState('wordInd', wordInd);
-    }, [ar, keyColors, rowInd, wordInd]);
+        saveState('won', won);
+        saveState('lost', lost);
+    }, [ar, keyColors, rowInd, won, lost]);
 
     const handleGuess = guessLetters => {
         const answerLetters = answer.answer.split('');
@@ -201,6 +221,9 @@ const Index = ({ answer }) => {
     };
 
     const handleInput = async keyPress => {
+        if (isLoading) {
+            return;
+        }
         if (!lost && !won) {
             const action = keyPressAction(keyPress, wordInd, curRow);
             const updatedArForDelete = [...ar];
@@ -250,57 +273,82 @@ const Index = ({ answer }) => {
     handleInputRef.current = handleInput;
 
     return (
-        <Container centerContent={true}>
-            <Alert
-                correctAnswer={answer.answer}
-                isOpen={isOpen}
-                lost={lost}
-                onClose={onClose}
-                won={won}
-            />
-            <NotAWord displayStyle={isNotAWordVisible ? 'block' : 'none'} />
-
-            <Heading size="xl">A Wordle Clone</Heading>
-            <Text>
-                A simple (not 1 to 1) copy of the popular{' '}
-                <b>
-                    <Link
-                        href={'https://www.nytimes.com/games/wordle/index.html'}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                    >
-                        Wordle
-                    </Link>
-                </b>
-                .{' '}
-                <Tooltip
-                    aria-label="A tooltip"
-                    label="Every day at midnight EST a new word is randomly selected from a list of almost 8000 of the most common english 5 letter words. This can result in answers that are more challenging and far less commonly used than the real Wordle."
-                >
-                    <Icon as={InfoOutlineIcon} cursor="pointer" h={5} w={5} />
-                </Tooltip>
-            </Text>
-            <LetterGrid array={ar} />
-            <Keyboard
-                colors={keyColors}
-                handleInput={handleInput}
-                joinedArray={joinedArray}
-            />
-        </Container>
+        <Flex alignItems="center" flexDirection="column" minHeight="100vh">
+            {isLoading ? (
+                <Spinner
+                    color="blue.500"
+                    emptyColor="gray.200"
+                    size="xl"
+                    speed="0.65s"
+                    thickness="4px"
+                />
+            ) : (
+                <>
+                    <Alert
+                        correctAnswer={answer.answer}
+                        isOpen={isOpen}
+                        lost={lost}
+                        onClose={onClose}
+                        won={won}
+                    />
+                    <NotAWord
+                        displayStyle={isNotAWordVisible ? 'block' : 'none'}
+                    />
+                    <Heading fontFamily={'Pacifiso'} size="xl">
+                        A Wordle Clone
+                    </Heading>
+                    <Text marginBottom={5}>
+                        A simple (not 1 to 1) copy of the popular{' '}
+                        <b>
+                            <Link
+                                href={
+                                    'https://www.nytimes.com/games/wordle/index.html'
+                                }
+                                rel="noopener noreferrer"
+                                target="_blank"
+                            >
+                                Wordle
+                            </Link>
+                        </b>
+                        .{' '}
+                        <Tooltip
+                            aria-label="A tooltip"
+                            label="Every day at midnight EST a new word is randomly selected from a list of almost 8000 of the most common english 5 letter words. This can result in answers that are more challenging and far less commonly used than the real Wordle."
+                        >
+                            <Icon
+                                as={InfoOutlineIcon}
+                                cursor="pointer"
+                                h={4}
+                                w={4}
+                            />
+                        </Tooltip>
+                    </Text>
+                    <LetterGrid array={ar} />
+                    <Keyboard colors={keyColors} handleInput={handleInput} />
+                </>
+            )}
+        </Flex>
     );
 };
 
 export default Index;
 
 export async function getServerSideProps() {
-    const { data } = await client.query({
-        query: AnswerDocument,
-        fetchPolicy: 'no-cache',
-    });
+    let answer;
+
+    if (process.env.NODE_ENV === 'development') {
+        answer = { answer: 'water' };
+    } else {
+        const { data } = await client.query({
+            query: AnswerDocument,
+            fetchPolicy: 'no-cache',
+        });
+        answer = data;
+    }
 
     return {
         props: {
-            answer: data,
+            answer: answer,
         },
     };
 }

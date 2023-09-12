@@ -1,58 +1,35 @@
-import { aliasQuery } from '../utils/graphql-test-utils';
+// in index.ts the answer is mocked to be 'water' while process.env.NODE_ENV === 'development'
 
-function enterWord(a: string, b: string, c: string, d: string, e: string) {
-    cy.get('.chakra-container > :nth-child(2)')
-        .trigger('keydown', {
-            key: a,
-        })
-        .trigger('keydown', {
-            key: b,
-        })
-        .trigger('keydown', {
-            key: c,
-        })
-        .trigger('keydown', {
-            key: d,
-        })
-        .trigger('keydown', {
-            key: e,
-        })
-        .trigger('keydown', {
-            key: 'Enter',
-        });
-}
-
-describe('', () => {
+describe('Wordle Clone', () => {
     beforeEach(() => {
-        cy.intercept('POST', 'http://localhost:4000/graphql', req => {
-            aliasQuery(req, 'InDictionary');
-        });
-        cy.visit('http://localhost:3000/', {
-            onBeforeLoad: win => {
-                let nextData;
-
-                Object.defineProperty(win, '__NEXT_DATA__', {
-                    set(o) {
-                        console.log('setting __NEXT_DATA__', o);
-                        // here is our change to modify the injected parsed data
-                        o.props.pageProps.answer.answer = 'there';
-                        nextData = o;
-                    },
-                    get() {
-                        return nextData;
-                    },
-                });
-            },
-        });
+        cy.visit('http://localhost:3000'); // Adjust the URL to wherever your game is hosted locally
     });
 
-    it('Works when you lose', () => {
+    it('should win the game', () => {
+        cy.get('[data-testid="key-W"]').click();
+        cy.get('[data-testid="key-A"]').click();
+        cy.get('[data-testid="key-T"]').click();
+        cy.get('[data-testid="key-E"]').click();
+        cy.get('[data-testid="key-R"]').click();
+        cy.get('[data-testid="key-ENTER"]').click();
+
+        // Adjust the selector to target the element that displays the win message.
+        cy.get('[data-testid="win-alert"]').should('be.visible');
+    });
+
+    it('should lose the game', () => {
+        // This test assumes you are entering the wrong guesses repeatedly until the game is lost.
+
         for (let i = 0; i < 6; i++) {
-            enterWord('E', 'V', 'E', 'N', 'T');
-            cy.wait('@gqlInDictionaryQuery')
-                .its('response.body.data')
-                .should('have.property', 'inDictionary');
+            cy.get('[data-testid="key-T"]').click();
+            cy.get('[data-testid="key-H"]').click();
+            cy.get('[data-testid="key-I"]').click();
+            cy.get('[data-testid="key-N"]').click();
+            cy.get('[data-testid="key-G"]').click();
+            cy.get('[data-testid="key-ENTER"]').click();
         }
-        cy.should('You lost');
+
+        // Adjust the selector to target the element that displays the loss message.
+        cy.get('[data-testid="loss-alert"]').should('be.visible');
     });
 });

@@ -1,34 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 
 import Key from '../components/Key';
 
-const Keyboard = ({ handleInput, joinedArray, colors }) => {
-    const [rows, setRows] = useState([
+const Keyboard = ({ handleInput, colors }) => {
+    const [rows] = useState([
         ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
         ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-        ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', <ArrowBackIcon />],
+        ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', <ArrowBackIcon key={1} />],
     ]);
 
-    const genKeyboard = () =>
-        rows.map((row, flexInd) => (
-            <Flex justifyContent="center" key={flexInd}>
-                {row.map((key, i) => {
-                    return (
+    const genKeyboard = () => (
+        <Box w={['100%']}>
+            {rows.map((row, flexInd) => (
+                <Flex justifyContent="center" key={flexInd}>
+                    {row.map((key, i) => (
                         <Key
-                            array={joinedArray}
                             color={colors}
                             handleInput={handleInput}
                             key={i}
                             letter={key}
-                        >
-                            {key}
-                        </Key>
-                    );
-                })}
-            </Flex>
-        ));
+                        ></Key>
+                    ))}
+                </Flex>
+            ))}
+        </Box>
+    );
+
     return <Box w={['100%']}>{genKeyboard()}</Box>;
 };
 

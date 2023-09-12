@@ -8,6 +8,7 @@ const Square = ({ color, letter }) => {
             background={color}
             display="flex"
             fontSize="35px"
+            fontWeight={'bold'}
             height="50px"
             justifyContent="center"
             margin="3px"

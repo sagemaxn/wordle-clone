@@ -20,7 +20,17 @@ export default function Alert({ isOpen, onClose, won, lost, correctAnswer }) {
             >
                 <AlertDialogOverlay>
                     <AlertDialogContent>
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        <AlertDialogHeader
+                            data-testid={
+                                won
+                                    ? 'win-alert'
+                                    : lost
+                                    ? 'loss-alert'
+                                    : undefined
+                            }
+                            fontSize="lg"
+                            fontWeight="bold"
+                        >
                             {won && 'You won!'}
                             {lost && `You lost. The word was ${correctAnswer}`}
                         </AlertDialogHeader>

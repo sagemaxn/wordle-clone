@@ -1,5 +1,4 @@
 import { Flex } from '@chakra-ui/react';
-import { useEffect } from 'react';
 import Square from './Square';
 
 const LetterGrid = ({ array }) => {

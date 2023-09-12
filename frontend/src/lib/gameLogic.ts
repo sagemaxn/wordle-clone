@@ -48,10 +48,21 @@ export function keyPressAction(keyPress, wordInd, curRow) {
 
     return { type: 'NO_ACTION' };
 }
+
+export const getCurrentDateInEST = () => {
+    const estOffset = -5; // UTC offset for EST without considering Daylight Saving Time
+    const estDate = new Date(new Date().getTime() + estOffset * 3600 * 1000);
+    return estDate.toISOString().split('T')[0]; // Format it as YYYY-MM-DD
+};
+
 export const saveState = (key, state) => {
     try {
         const serializedState = JSON.stringify(state);
         localStorage.setItem(key, serializedState);
+
+        // Save current date as EST
+        const currentDate = getCurrentDateInEST();
+        localStorage.setItem('date', currentDate);
     } catch (e) {
         console.error('Could not save state', e);
     }
