@@ -16,8 +16,6 @@ import Keyboard from '../components/Keyboard';
 import Alert from '../components/Alert';
 import NotAWord from '../components/NotAWord';
 import { AnswerDocument, useInDictionaryLazyQuery } from '../generated/graphql';
-
-const stColor = 'lightgrey';
 import {
     clearState,
     getCurrentDateInEST,
@@ -26,6 +24,8 @@ import {
     saveState,
     setColors,
 } from '../lib/gameLogic';
+
+const stColor = 'lightgrey';
 
 const Index = ({ answer }) => {
     const [won, setWon] = useState(false);
@@ -159,24 +159,32 @@ const Index = ({ answer }) => {
             saveState('date', currentDate);
         } else {
             const savedAr = loadState('ar');
-            const savedKeyColors = loadState('keyColors');
-            const savedRowInd = loadState('rowInd');
-            const savedWon = loadState('won');
-            const savedLost = loadState('lost');
-
             if (savedAr) {
+                console.log('Loaded ar:', savedAr);
                 setAr(savedAr);
             }
+
+            const savedKeyColors = loadState('keyColors');
             if (savedKeyColors) {
+                console.log('Loaded keyColors:', savedKeyColors);
                 setKeyColors(savedKeyColors);
             }
+
+            const savedRowInd = loadState('rowInd');
             if (typeof savedRowInd === 'number') {
+                console.log('Loaded rowInd:', savedRowInd);
                 setRowInd(savedRowInd);
             }
+
+            const savedWon = loadState('won');
             if (savedWon !== null) {
+                console.log('Loaded won:', savedWon);
                 setWon(savedWon);
             }
+
+            const savedLost = loadState('lost');
             if (savedLost !== null) {
+                console.log('Loaded lost:', savedLost);
                 setLost(savedLost);
             }
         }
@@ -185,12 +193,21 @@ const Index = ({ answer }) => {
     }, []);
 
     useEffect(() => {
+        console.log('Saving ar:', ar);
         saveState('ar', ar);
+
+        console.log('Saving keyColors:', keyColors);
         saveState('keyColors', keyColors);
+
+        console.log('Saving rowInd:', rowInd);
         saveState('rowInd', rowInd);
+
+        console.log('Saving won:', won);
         saveState('won', won);
+
+        console.log('Saving lost:', lost);
         saveState('lost', lost);
-    }, [ar, keyColors, rowInd, won, lost]);
+    }, [keyColors, rowInd, won, lost]);
 
     const handleGuess = guessLetters => {
         const answerLetters = answer.answer.split('');
@@ -334,21 +351,14 @@ const Index = ({ answer }) => {
 export default Index;
 
 export async function getServerSideProps() {
-    let answer;
-
-    if (process.env.NODE_ENV === 'development') {
-        answer = { answer: 'water' };
-    } else {
-        const { data } = await client.query({
-            query: AnswerDocument,
-            fetchPolicy: 'no-cache',
-        });
-        answer = data;
-    }
-
+    const { data } = await client.query({
+        query: AnswerDocument,
+        fetchPolicy: 'no-cache',
+    });
+    console.log(`props answer: ${JSON.stringify(data)}`);
     return {
         props: {
-            answer: answer,
+            answer: data,
         },
     };
 }

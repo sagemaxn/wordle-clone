@@ -49,41 +49,39 @@ export function keyPressAction(keyPress, wordInd, curRow) {
     return { type: 'NO_ACTION' };
 }
 
+import moment from 'moment-timezone';
+
 export const getCurrentDateInEST = () => {
-    const estOffset = -5; // UTC offset for EST without considering Daylight Saving Time
-    const estDate = new Date(new Date().getTime() + estOffset * 3600 * 1000);
-    return estDate.toISOString().split('T')[0]; // Format it as YYYY-MM-DD
+    const dateInNY = moment().tz('America/New_York');
+    return dateInNY.format('YYYY-MM-DD');
 };
 
-export const saveState = (key, state) => {
+export function saveState(key: string, state: any): void {
     try {
         const serializedState = JSON.stringify(state);
         localStorage.setItem(key, serializedState);
-
-        // Save current date as EST
-        const currentDate = getCurrentDateInEST();
-        localStorage.setItem('date', currentDate);
-    } catch (e) {
-        console.error('Could not save state', e);
+    } catch (err) {
+        console.error(`Error saving state for key: ${key}`, err);
     }
-};
+}
 
-export const loadState = key => {
+export function loadState(key: string): any {
     try {
         const serializedState = localStorage.getItem(key);
         if (serializedState === null) {
             return undefined;
         }
         return JSON.parse(serializedState);
-    } catch (e) {
-        console.error('Could not load state', e);
+    } catch (err) {
+        console.error(`Error loading state for key: ${key}`, err);
         return undefined;
     }
-};
+}
 
 export const clearState = key => {
     try {
         localStorage.removeItem(key);
+        localStorage.removeItem('date');
     } catch (e) {
         console.error('Could not clear state', e);
     }

@@ -9,7 +9,7 @@ import * as http from 'http';
 import { ApolloServer } from '@apollo/server';
 import { buildSchema } from 'type-graphql';
 import { WordResolver } from './src/resolvers/WordResolver';
-
+import './src/dictionary/logic/scheduler';
 import { config } from 'dotenv';
 config();
 
@@ -26,6 +26,7 @@ const main = async () => {
     const server = new ApolloServer<MyContext>({
         schema,
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+        introspection: true,
     });
     await server.start();
     app.use(
